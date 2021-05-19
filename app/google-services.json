@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "578120068484",
+    "project_id": "my-firebase-16fbf",
+    "storage_bucket": "my-firebase-16fbf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578120068484:android:2d0b9eaafa74238c9541d1",
+        "android_client_info": {
+          "package_name": "com.example.messedup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578120068484-99cc57i9c74ti5ibjpq7qskekna67jor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPQTw9lMsBYnbHmE76BoGTUx0fakeoLGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578120068484-99cc57i9c74ti5ibjpq7qskekna67jor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578120068484:android:b4645faf4d78e7db9541d1",
+        "android_client_info": {
+          "package_name": "com.jayant.pocketlibrary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578120068484-99cc57i9c74ti5ibjpq7qskekna67jor.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPQTw9lMsBYnbHmE76BoGTUx0fakeoLGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578120068484-99cc57i9c74ti5ibjpq7qskekna67jor.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
