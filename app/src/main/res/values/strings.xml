@@ -2,4 +2,6 @@
     <string name="app_name">Pocket Library</string>
     <string name="term_and_service">By creating an account, you agree with our
         \\n Terms of Service Privacy Policy</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,17 +1,27 @@
 package com.jayant.pocketlibrary;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.jayant.pocketlibrary.dashboard.Dashboard;
+
 public class SignUp extends AppCompatActivity {
 
     private EditText signUpName, signUpEmail, signUpPassword, signUpConPassword;
     private Button signUpBtn;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +33,8 @@ public class SignUp extends AppCompatActivity {
         signUpPassword = findViewById(R.id.signup_password);
         signUpConPassword = findViewById(R.id.signup_con_pasword);
         signUpBtn = findViewById(R.id.sign_up_btn);
+
+        mAuth = FirebaseAuth.getInstance();
 
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,6 +75,23 @@ public class SignUp extends AppCompatActivity {
                 }
 
                 Toast.makeText(SignUp.this, "Data verified", Toast.LENGTH_SHORT).show();
+
+                mAuth.createUserWithEmailAndPassword(email, password).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+
+                        startActivity(new Intent(getApplicationContext(), Dashboard.class));
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        Toast.makeText(SignUp.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
 
 
             }
