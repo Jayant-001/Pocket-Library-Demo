@@ -47,13 +47,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter password"
+        android:layout_marginHorizontal="55dp"
         app:endIconMode="password_toggle"
-        android:layout_gravity="center_vertical"
-        android:gravity="center">
+        android:layout_gravity="center_vertical">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:inputType="textPassword"/>
 
     </com.google.android.material.textfield.TextInputLayout>
