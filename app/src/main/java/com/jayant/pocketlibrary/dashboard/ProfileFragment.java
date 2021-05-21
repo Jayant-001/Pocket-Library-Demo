@@ -1,18 +1,34 @@
 package com.jayant.pocketlibrary.dashboard;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.jayant.pocketlibrary.MainActivity;
 import com.jayant.pocketlibrary.R;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,8 +46,12 @@ public class ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private TextView name, email;
     private Button logoutBtn;
+
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private String userId;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -70,8 +90,38 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        name = view.findViewById(R.id.user_name);
+        email = view.findViewById(R.id.user_email);
         logoutBtn = view.findViewById(R.id.logout_btn);
+
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+
+        DocumentReference documentReference = db.collection("users").document(userId);
+//        documentReference.addSnapshotListener(getContext(), new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+//                name.setText(value.getString("name"));
+//                email.setText(value.getString("email"));
+//            }
+//        });
+
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()) {
+                    name.setText(documentSnapshot.getString("name"));
+                    email.setText(documentSnapshot.getString("email"));
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,4 +136,5 @@ public class ProfileFragment extends Fragment {
 
         return view;
     }
+
 }
