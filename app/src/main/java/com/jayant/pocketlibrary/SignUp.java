@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.jayant.pocketlibrary.dashboard.Dashboard;
@@ -33,8 +34,7 @@ public class SignUp extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
-    String userId;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,6 @@ public class SignUp extends AppCompatActivity {
         signUpBtn = findViewById(R.id.sign_up_btn);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,23 +94,25 @@ public class SignUp extends AppCompatActivity {
                     public void onSuccess(AuthResult authResult) {
 
                         userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
-                        DocumentReference documentReference = db.collection("users").document(userId);
 
                         Map<String, Object> data = new HashMap<>();
                         data.put("name", name);
                         data.put("email", email);
                         data.put("password", password);
-                        documentReference.set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Log.d(TAG, "onSuccess: " + userId);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
+
+                        FirebaseDatabase.getInstance().getReference().child("Users").child(userId).setValue(data)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(SignUp.this, "Data saved", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(SignUp.this, e.toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignUp.this, "Database error : " + e.toString(), Toast.LENGTH_SHORT).show();
                             }
                         });
+
 
                         startActivity(new Intent(getApplicationContext(), Dashboard.class));
                         finish();

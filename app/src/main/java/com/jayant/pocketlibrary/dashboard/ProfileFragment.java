@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -57,15 +62,6 @@ public class ProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -100,28 +96,43 @@ public class ProfileFragment extends Fragment {
         userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         DocumentReference documentReference = db.collection("users").document(userId);
-//        documentReference.addSnapshotListener(getContext(), new EventListener<DocumentSnapshot>() {
+
+        FirebaseDatabase.getInstance().getReference().child("Users").child(userId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        String userName = "Name : " + snapshot.child("name").getValue(String.class);
+                        String userEmail = "Email: " + snapshot.child("email").getValue(String.class);
+
+                        name.setText(userName);
+                        email.setText(userEmail);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                        Log.e("error", "onCancelled: " + error.toString());
+                    }
+                });
+
+
+
+//        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 //            @Override
-//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                name.setText(value.getString("name"));
-//                email.setText(value.getString("email"));
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                if(documentSnapshot.exists()) {
+//                    name.setText(documentSnapshot.getString("name"));
+//                    email.setText(documentSnapshot.getString("email"));
+//                }
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
 //            }
 //        });
-
-        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()) {
-                    name.setText(documentSnapshot.getString("name"));
-                    email.setText(documentSnapshot.getString("email"));
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
