@@ -3,18 +3,18 @@ package com.jayant.pocketlibrary.dashboard;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.jayant.pocketlibrary.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FavoriteFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FavoriteFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -26,19 +26,13 @@ public class FavoriteFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private RecyclerView recyclerView;
+    private UserBooksAdapter adapter;
+
     public FavoriteFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FavoriteFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static FavoriteFragment newInstance(String param1, String param2) {
         FavoriteFragment fragment = new FavoriteFragment();
         Bundle args = new Bundle();
@@ -61,6 +55,31 @@ public class FavoriteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite, container, false);
+        View view =  inflater.inflate(R.layout.fragment_favorite, container, false);
+
+        recyclerView = view.findViewById(R.id.user_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseRecyclerOptions<PdfData> options = new FirebaseRecyclerOptions.Builder<PdfData>()
+                .setQuery(FirebaseDatabase.getInstance().getReference().child("Users").child(userid).child("myBooks"), PdfData.class).build();
+
+        adapter = new UserBooksAdapter(options);
+        recyclerView.setAdapter(adapter);
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 }

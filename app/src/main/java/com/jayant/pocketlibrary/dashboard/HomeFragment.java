@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
                     if (list.get(i).getAuthor() != null)
                     {
                         author = "Unknown";
-                        Log.e("error", "null author");
+//                        Log.e("error", "null author");
                     }
                     else {
                         author = list.get(i).getAuthor();

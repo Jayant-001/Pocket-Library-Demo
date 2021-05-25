@@ -3,14 +3,16 @@ package com.jayant.pocketlibrary.dashboard;
 public class PdfData {
 
     String name;
-    String uri;
+    String url;
+    int view;
 
     public PdfData() {
     }
 
-    public PdfData(String name, String uri) {
+    public PdfData(String name, String url, int view) {
         this.name = name;
-        this.uri = uri;
+        this.url = url;
+        this.view = view;
     }
 
     public String getName() {
@@ -21,11 +23,19 @@ public class PdfData {
         this.name = name;
     }
 
-    public String getUri() {
-        return uri;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getView() {
+        return view;
+    }
+
+    public void setView(int view) {
+        this.view = view;
     }
 }

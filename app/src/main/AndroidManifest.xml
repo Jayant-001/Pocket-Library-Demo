@@ -3,7 +3,7 @@
     package="com.jayant.pocketlibrary">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PocketLibrary">
-        <activity android:name=".dashboard.AddBook"></activity>
+        <activity android:name=".dashboard.PdfView"></activity>
+        <activity android:name=".dashboard.AddBook" />
         <activity android:name=".dashboard.Dashboard" />
         <activity android:name=".SignIn" />
         <activity android:name=".SignUp" />

@@ -15,9 +15,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -26,8 +28,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.jayant.pocketlibrary.R;
 
-public class AddBook extends AppCompatActivity {
+import java.util.HashMap;
+import java.util.Map;
 
+public class AddBook extends AppCompatActivity {
 
     private CardView selectPdf;
     private TextView pdfName;
@@ -47,8 +51,8 @@ public class AddBook extends AppCompatActivity {
         pdfTitle = findViewById(R.id.upload_pdf_title);
         uploadPdf = findViewById(R.id.upload_pdf_btn);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-        storageReference = FirebaseStorage.getInstance().getReference("uploadedPdf");
+        databaseReference = FirebaseDatabase.getInstance().getReference("books");
+        storageReference = FirebaseStorage.getInstance().getReference("books");
 
         uploadPdf.setEnabled(false);
 
@@ -59,11 +63,8 @@ public class AddBook extends AppCompatActivity {
             }
         });
 
-
-
-
-
     }
+
 
     private void selectPdfFile() {
         Intent intent = new Intent();
@@ -77,13 +78,21 @@ public class AddBook extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 12 && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if( requestCode == 12 && resultCode == RESULT_OK && data != null && data.getData() != null ) {
+
             uploadPdf.setEnabled(true);
             pdfName.setText(data.getDataString().substring(data.getDataString().lastIndexOf("/") + 1));
             
             uploadPdf.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    if (pdfTitle.getText().toString().equals("")){
+                        pdfTitle.setError("Title required");
+                        pdfTitle.requestFocus();
+                        return;
+                    }
+
                     uploadFileToFirebase(data.getData());
                 }
             });
@@ -105,9 +114,29 @@ public class AddBook extends AppCompatActivity {
                 while(!uriTask.isComplete());
                 Uri uri = uriTask.getResult();
 
-                PdfData pdfData = new PdfData(pdfTitle.getText().toString(), uri.toString());
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                Map<String, Object> data = new HashMap<>();
+                data.put("name", pdfTitle.getText().toString());
+                data.put("url", uri.toString());
+
+                FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("myBooks").push().setValue(data)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(AddBook.this, "user updated", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(AddBook.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+                PdfData pdfData = new PdfData(pdfTitle.getText().toString(), uri.toString(), 0);
                 databaseReference.child(databaseReference.push().getKey()).setValue(pdfData);
                 Toast.makeText(AddBook.this, "File is uploaded", Toast.LENGTH_SHORT).show();
+                finish();
                 progressDialog.dismiss();
 
             }
